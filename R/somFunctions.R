@@ -162,7 +162,7 @@ somWithMappingR <- function(dataSet, weightMatrix, oldColumns,
     #   neuronCoordinates <- rearrangeNeuronCoordinates(neuronCoordinates, somSize)
     # }
 
-    # Zähltabellee
+    # Zähltabelle
     oldValue <- node.summary[node.summary$x == neuronCoordinates["neuronX"] & node.summary$y ==
                    neuronCoordinates["neuronY"], "n.features"]
     node.summary[node.summary$x == neuronCoordinates["neuronX"] & node.summary$y ==
