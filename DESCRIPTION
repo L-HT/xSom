@@ -1,0 +1,23 @@
+Package: xSom
+Type: Package
+Title: Parallel Version of the Som Algorithm for Extendable Datasets
+Version: 0.8.1
+Authors@R: person("Hoang Thanh", "Le", email = "test@test.com",
+  role = c("aut", "cre"))
+Description: A parallelized version of the self-organizing map.
+    This algorithm also supports the extension of data sets where new columns
+	are appended without changing the resulting codebook matrix in the 
+    old columns.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    RcppParallel,
+    som,
+    Rcpp
+LinkingTo: 
+    RcppParallel,
+    Rcpp
+RoxygenNote: 6.0.1
+Suggests: 
+    testthat
