@@ -33,19 +33,23 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
 
   int progressStep = 1;
 
-  if (cycles >= 100){
-    progressStep = (int) (cycles / 100);
-    std::cout << "1%                                                                                              100%" << std::endl;
-  }else{
-    if (!updateParametersPerEpoch && maxCycleIntern > 100){
-      progressStep = (int) (maxCycleIntern / 100);
-      std::cout << "1%                                                                                              100%" << std::endl;
-    }
+  // if (cycles >= 100){
+  //   progressStep = (int) (cycles / 100);
+  //   Rcpp::Rcout << "1%                                                                                              100%" << std::endl;
+  // }else{
+  //   if (!updateParametersPerEpoch && maxCycleIntern > 100){
+  //     progressStep = (int) (maxCycleIntern / 100);
+  //     Rcpp::Rcout << "1%                                                                                              100%" << std::endl;
+  //   }
+  // }
+  if (maxCycleIntern > 100){
+    progressStep = (int) (maxCycleIntern / 100);
+    Rcpp::Rcout << "1%                                                                                              100%" << std::endl;
   }
   for (unsigned int cycle = 0; cycle < cycles; cycle++){
-    if (cycle % progressStep == 0 && cycles >= 100 && updateParametersPerEpoch){
-      std::cout << ".";
-    }
+    // if (cycle % progressStep == 0 && cycles >= 100 && updateParametersPerEpoch){
+    //   Rcpp::Rcout << ".";
+    // }
     Rcpp::IntegerVector data_order;
     if (sampling == 0){
       data_order = Rcpp::seq_len(dataSet.nrow());
@@ -57,8 +61,8 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
       }
     }
     for (Rcpp::IntegerVector::iterator it = data_order.begin(); it < data_order.end(); it++){
+      cycleIntern++;
       if (!updateParametersPerEpoch){
-        cycleIntern++;
         if (radiusReduction < 0){
           currentRadius = 1+(initRadius-1)*(maxCycleIntern-cycleIntern)/(maxCycleIntern);
         }else{
@@ -73,9 +77,10 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
             learnRate = initLearnRate * inverseLearnRateC / (inverseLearnRateC + cycleIntern);
           }
         }
-        if (cycleIntern % progressStep == 0 && maxCycleIntern >= 100){
-          std::cout << ".";
-        }
+
+      }
+      if (cycleIntern % progressStep == 0 && maxCycleIntern >= 100){
+        Rcpp::Rcout << ".";
       }
       int chosenIndex = *it - 1;
       x = dataSet.row(chosenIndex);
@@ -117,6 +122,6 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
     }
     Rcpp::checkUserInterrupt();
   }
-  std::cout << std::endl;
+  Rcpp::Rcout << std::endl;
   return result;
 }

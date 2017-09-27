@@ -107,7 +107,7 @@ findWinningNeuron <- function(weightMatrix, x, oldColumns) {
 #' @export
 #' @examples
 #' # generate data and initialize weight matrix
-#' dataSet <- matrix(as.numeric(1:20),ncol=2)
+#' dataSet <- matrix(as.numeric(1:400),ncol=2)
 #' weightMatrix <- som.init.extended(dataSet, somSize=2, oldColumns=c(TRUE,TRUE))
 #'
 #' # apply the algorithm
@@ -125,10 +125,10 @@ somCheckNa <- function(dataSet, weightMatrix, oldColumns, rlen = as.integer( c(0
 #'
 #' @inheritParams somCheckNa
 #' @return A list described above.
-#' @export
+#' //@export
 #' @examples
 #' # generate data and initialize weight matrix
-#' dataSet <- matrix(as.numeric(1:20),ncol=2)
+#' dataSet <- matrix(as.numeric(1:400),ncol=2)
 #' weightMatrix <- som.init.extended(dataSet, somSize=2, oldColumns=c(TRUE,TRUE))
 #'
 #' # apply the algorithm

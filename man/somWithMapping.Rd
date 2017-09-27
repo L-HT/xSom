@@ -72,6 +72,7 @@ This behavior is replicated by setting \code{updateParametersPerEpoch} to \code{
 }
 \value{
 A list described above.
+//@export
 }
 \description{
 This function is identical to \code{somCheckNa}, but returns a list containing the following
@@ -82,7 +83,7 @@ elements: (insert here)
 }
 \examples{
 # generate data and initialize weight matrix
-dataSet <- matrix(as.numeric(1:20),ncol=2)
+dataSet <- matrix(as.numeric(1:400),ncol=2)
 weightMatrix <- som.init.extended(dataSet, somSize=2, oldColumns=c(TRUE,TRUE))
 
 # apply the algorithm

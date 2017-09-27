@@ -12,24 +12,27 @@ learnCyclesExtendedR <- function(dataSet, weightMatrix, oldColumns,cycles = 1, i
   inverseLearnRateC <- -learnRateReduction;
   progressStep = 1;
 
-  if (cycles >= 100){
-    progressStep <-  (cycles / 100.0);
+  # if (cycles >= 100){
+  #   progressStep <-  (cycles / 100.0);
+  #     cat("1%                                                                                              100%\n")
+  # }else{
+  #   if (!updateParametersPerEpoch && maxCycleIntern > 100){
+  #     progressStep <- (maxCycleIntern %/% 100.0);
+  #     cat("1%                                                                                              100%\n")
+  #   }
+  # }
+  if (maxCycleIntern > 100){
+    progressStep <- (maxCycleIntern %/% 100.0);
     cat("1%                                                                                              100%\n")
-  }else{
-    if (!updateParametersPerEpoch && maxCycleIntern > 100){
-      progressStep <- (maxCycleIntern / 100.0);
-      cat("1%                                                                                              100%\n")
-    }
   }
-
   for (cycle in 1:cycles){
-    if (cycle %% progressStep == 0 && cycles >= 100 && updateParametersPerEpoch){
-      cat(".")
-    }
+    # if (cycle %% progressStep == 0 && cycles >= 100 && updateParametersPerEpoch){
+    #   cat(".")
+    # }
     data_order = calculateDataOrder(nrowDataSet, sampling)
     for (it in data_order){
+      cycleIntern <- cycleIntern + 1
       if (!updateParametersPerEpoch){
-        cycleIntern <- cycleIntern + 1
         if (radiusReduction < 0){
           currentRadius <- 1+(initRadius-1)*(maxCycleIntern-cycleIntern)/(maxCycleIntern)
         }else{
@@ -44,9 +47,9 @@ learnCyclesExtendedR <- function(dataSet, weightMatrix, oldColumns,cycles = 1, i
             learnRate <- initLearnRate * inverseLearnRateC / (inverseLearnRateC + cycleIntern)
           }
         }
-        if (cycleIntern %% progressStep == 0 && maxCycleIntern >= 100){
-          cat(".")
-        }
+      }
+      if (cycleIntern %% progressStep == 0 && maxCycleIntern >= 100){
+        cat(".")
       }
       x = dataSet[it,]
       resultDelta = calculateDelta(weightMatrix, x, naExist);

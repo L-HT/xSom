@@ -41,7 +41,7 @@ Rcpp::NumericMatrix somTwoStep(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix 
       initRadius = Rcpp::NumericVector::create(initRadius[0],  (initRadius[0] > 2 ? initRadius[0] : 2.0 ) );
     }
   }
-  std::cout << "Erste Trainingsstufe (rlen = " << rlen[0] << " Zyklen, initLearnRate = " << initLearnRate[0] << ", initRadius = " <<
+  Rcpp::Rcout << "Erste Trainingsstufe (rlen = " << rlen[0] << " Zyklen, initLearnRate = " << initLearnRate[0] << ", initRadius = " <<
     initRadius[0] << ")" << std::endl;
   result = learnCyclesExtended(dataSet, weightMatrix, oldColumns, rlen[0],
                               initLearnRate[0], learnRateReduction, initRadius[0],
@@ -50,7 +50,7 @@ Rcpp::NumericMatrix somTwoStep(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix 
                               );
 
   if (rlen[1] != 0){
-    std::cout << "Zweite Trainingsstufe (rlen = " << rlen[1] << " Zyklen, initLearnRate = " << initLearnRate[1] << ", initRadius = " <<
+    Rcpp::Rcout << "Zweite Trainingsstufe (rlen = " << rlen[1] << " Zyklen, initLearnRate = " << initLearnRate[1] << ", initRadius = " <<
       initRadius[1] << ")" << std::endl;
     result = learnCyclesExtended(dataSet, result, oldColumns, rlen[1],
                                  initLearnRate[1], learnRateReduction, initRadius[1],
@@ -122,7 +122,7 @@ Rcpp::NumericMatrix somTwoStep(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix 
 //' @export
 //' @examples
 //' # generate data and initialize weight matrix
-//' dataSet <- matrix(as.numeric(1:20),ncol=2)
+//' dataSet <- matrix(as.numeric(1:400),ncol=2)
 //' weightMatrix <- som.init.extended(dataSet, somSize=2, oldColumns=c(TRUE,TRUE))
 //'
 //' # apply the algorithm
@@ -181,7 +181,7 @@ Rcpp::NumericMatrix somCheckNa(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix 
       }
     }
     if (naFound){
-      std::cout << " -- NAs in den ersten 100 Zeilen erkannt. Es wird Training mit NAs genutzt. -- " << std::endl;
+      Rcpp::Rcout << " -- NAs in den ersten 100 Zeilen erkannt. Es wird Training mit NAs genutzt. -- " << std::endl;
     }
     result = somTwoStep(dataSet, weightMatrix,  oldColumns,rlen, initLearnRate, initRadius,radiusReduction,
                         learnRateReduction, normType, sampling, naFound, updateParametersPerEpoch);
@@ -198,10 +198,10 @@ Rcpp::NumericMatrix somCheckNa(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix 
 //'
 //' @inheritParams somCheckNa
 //' @return A list described above.
-//' @export
+//' //@export
 //' @examples
 //' # generate data and initialize weight matrix
-//' dataSet <- matrix(as.numeric(1:20),ncol=2)
+//' dataSet <- matrix(as.numeric(1:400),ncol=2)
 //' weightMatrix <- som.init.extended(dataSet, somSize=2, oldColumns=c(TRUE,TRUE))
 //'
 //' # apply the algorithm
