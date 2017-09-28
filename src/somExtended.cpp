@@ -77,7 +77,6 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
             learnRate = initLearnRate * inverseLearnRateC / (inverseLearnRateC + cycleIntern);
           }
         }
-
       }
       if (cycleIntern % progressStep == 0 && maxCycleIntern >= 100){
         Rcpp::Rcout << ".";

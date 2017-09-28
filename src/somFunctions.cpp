@@ -126,7 +126,7 @@ Rcpp::NumericMatrix somTwoStep(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix 
 //' weightMatrix <- som.init.extended(dataSet, somSize=2, oldColumns=c(TRUE,TRUE))
 //'
 //' # apply the algorithm
-//' result <- somWithMapping(dataSet, weightMatrix, oldColumns=c(TRUE,TRUE))
+//' result <- somCheckNa(dataSet, weightMatrix, oldColumns=c(TRUE,TRUE))
 // [[Rcpp::export]]
 Rcpp::NumericMatrix somCheckNa(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix weightMatrix,
                                Rcpp::LogicalVector oldColumns,
