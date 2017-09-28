@@ -1,5 +1,5 @@
 learnCyclesExtendedR <- function(dataSet, weightMatrix, oldColumns,cycles = 1, initLearnRate = 0.01,
-                                 learnRateReduction = 0.0001,  initRadius = 1.0,  radiusReduction = -1.0,
+                                 learnRateReduction = 0.0,  initRadius = 1.0,  radiusReduction = -1.0,
                                  normType = 2, sampling = 1, naExist = T, updateParametersPerEpoch = T){
 
   nrowDataSet <- nrow(dataSet)
@@ -39,6 +39,8 @@ learnCyclesExtendedR <- function(dataSet, weightMatrix, oldColumns,cycles = 1, i
           currentRadius <- currentRadius - radiusReduction;
         }
         if (learnRateReduction == 0){
+          # print(paste(currentRadius,maxCycleIntern,cycleIntern,learnRate,sep="--"))
+
           learnRate <- initLearnRate*(1.0-(cycleIntern)/maxCycleIntern)
         }else{
           if (learnRateReduction > 0){
@@ -48,6 +50,7 @@ learnCyclesExtendedR <- function(dataSet, weightMatrix, oldColumns,cycles = 1, i
           }
         }
       }
+      # print(paste(currentRadius,maxCycleIntern,cycleIntern,learnRate,sep="--"))
       if (cycleIntern %% progressStep == 0 && maxCycleIntern >= 100){
         cat(".")
       }

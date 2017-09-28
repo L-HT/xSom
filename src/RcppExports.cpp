@@ -94,6 +94,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// learnCyclesExtended
+Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix weightMatrix, Rcpp::LogicalVector oldColumns, unsigned int cycles, double initLearnRate, double learnRateReduction, double initRadius, double radiusReduction, int normType, int sampling, bool naExist, bool updateParametersPerEpoch);
+RcppExport SEXP xSom_learnCyclesExtended(SEXP dataSetSEXP, SEXP weightMatrixSEXP, SEXP oldColumnsSEXP, SEXP cyclesSEXP, SEXP initLearnRateSEXP, SEXP learnRateReductionSEXP, SEXP initRadiusSEXP, SEXP radiusReductionSEXP, SEXP normTypeSEXP, SEXP samplingSEXP, SEXP naExistSEXP, SEXP updateParametersPerEpochSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type dataSet(dataSetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type weightMatrix(weightMatrixSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type oldColumns(oldColumnsSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type cycles(cyclesSEXP);
+    Rcpp::traits::input_parameter< double >::type initLearnRate(initLearnRateSEXP);
+    Rcpp::traits::input_parameter< double >::type learnRateReduction(learnRateReductionSEXP);
+    Rcpp::traits::input_parameter< double >::type initRadius(initRadiusSEXP);
+    Rcpp::traits::input_parameter< double >::type radiusReduction(radiusReductionSEXP);
+    Rcpp::traits::input_parameter< int >::type normType(normTypeSEXP);
+    Rcpp::traits::input_parameter< int >::type sampling(samplingSEXP);
+    Rcpp::traits::input_parameter< bool >::type naExist(naExistSEXP);
+    Rcpp::traits::input_parameter< bool >::type updateParametersPerEpoch(updateParametersPerEpochSEXP);
+    rcpp_result_gen = Rcpp::wrap(learnCyclesExtended(dataSet, weightMatrix, oldColumns, cycles, initLearnRate, learnRateReduction, initRadius, radiusReduction, normType, sampling, naExist, updateParametersPerEpoch));
+    return rcpp_result_gen;
+END_RCPP
+}
 // somCheckNa
 Rcpp::NumericMatrix somCheckNa(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix weightMatrix, Rcpp::LogicalVector oldColumns, Rcpp::IntegerVector rlen, Rcpp::NumericVector initLearnRate, Rcpp::NumericVector initRadius, double radiusReduction, double learnRateReduction, int normType, int sampling, bool naExist, bool updateParametersPerEpoch);
 RcppExport SEXP xSom_somCheckNa(SEXP dataSetSEXP, SEXP weightMatrixSEXP, SEXP oldColumnsSEXP, SEXP rlenSEXP, SEXP initLearnRateSEXP, SEXP initRadiusSEXP, SEXP radiusReductionSEXP, SEXP learnRateReductionSEXP, SEXP normTypeSEXP, SEXP samplingSEXP, SEXP naExistSEXP, SEXP updateParametersPerEpochSEXP) {

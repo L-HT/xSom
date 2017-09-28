@@ -87,5 +87,5 @@ dataSet <- matrix(as.numeric(1:400),ncol=2)
 weightMatrix <- som.init.extended(dataSet, somSize=2, oldColumns=c(TRUE,TRUE))
 
 # apply the algorithm
-result <- somWithMapping(dataSet, weightMatrix, oldColumns=c(TRUE,TRUE))
+result <- somCheckNa(dataSet, weightMatrix, oldColumns=c(TRUE,TRUE))
 }

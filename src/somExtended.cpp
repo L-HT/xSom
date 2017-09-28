@@ -10,6 +10,7 @@
 #include "NeighborhoodMatrix.h"
 #include "SimpleMatrixOperations.h"
 
+// [[Rcpp::export]]
 Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix weightMatrix,
                                 Rcpp::LogicalVector oldColumns,
                                 unsigned int cycles = 1, double initLearnRate = 0.01,
@@ -69,6 +70,8 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
           currentRadius -= radiusReduction;
         }
         if (learnRateReduction == 0){
+          // Rcpp::Rcout << currentRadius << "--" << maxCycleIntern << "--" << cycleIntern << "--" << learnRate << std::endl;
+
           learnRate = initLearnRate*(1.0-((double)cycleIntern)/maxCycleIntern);
         }else{
           if (learnRateReduction > 0){
@@ -81,6 +84,8 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
       if (cycleIntern % progressStep == 0 && maxCycleIntern >= 100){
         Rcpp::Rcout << ".";
       }
+      // Rcpp::Rcout << currentRadius << "--" << maxCycleIntern << "--" << cycleIntern << "--" << learnRate << std::endl;
+
       int chosenIndex = *it - 1;
       x = dataSet.row(chosenIndex);
       try{
@@ -110,6 +115,8 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
       }catch(std::exception &ex){
         forward_exception_to_r(ex);
       }
+      // Rcpp::Rcout << currentRadius << " -- " << learnRate << std::endl;
+      // return result;
     }
     if (updateParametersPerEpoch){
       currentRadius = 1+(initRadius-1)*(cycles-(cycle+1.0))/(cycles);

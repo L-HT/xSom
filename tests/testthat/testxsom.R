@@ -72,3 +72,15 @@ test_that("Gleichheit zwischen xSom (R) und som, inverseLernRate", {
     new, old
   )
 })
+
+test_that("Tests zwischen LearnCyclesExtended (updateParametersPerEpoch=T)",{
+  noR <- xSom:::learnCyclesExtended(dataSet= data, weightMatrix=W,  oldColumns=c(T,T), sampling=0, naExist=F, updateParametersPerEpoch = T)
+  withR <- xSom:::learnCyclesExtendedR(dataSet= data, weightMatrix=W,  oldColumns=c(T,T), sampling=0, naExist=F, updateParametersPerEpoch = T)
+  expect_equal(noR, withR)
+})
+
+test_that("Tests zwischen LearnCyclesExtended (updateParametersPerEpoch=F)",{
+  noR <- xSom:::learnCyclesExtended(dataSet= data, weightMatrix=W,  oldColumns=c(T,T), sampling=0, naExist=F, updateParametersPerEpoch = F)
+  withR <- xSom:::learnCyclesExtendedR(dataSet= data, weightMatrix=W,  oldColumns=c(T,T), sampling=0, naExist=F, updateParametersPerEpoch = F)
+  expect_equal(noR, withR)
+})

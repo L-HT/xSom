@@ -46,6 +46,10 @@ findWinningNeuron <- function(weightMatrix, x, oldColumns) {
     .Call('xSom_findWinningNeuron', PACKAGE = 'xSom', weightMatrix, x, oldColumns)
 }
 
+learnCyclesExtended <- function(dataSet, weightMatrix, oldColumns, cycles = 1L, initLearnRate = 0.01, learnRateReduction = 0.0, initRadius = 1.0, radiusReduction = -1.0, normType = 2L, sampling = 1L, naExist = TRUE, updateParametersPerEpoch = TRUE) {
+    .Call('xSom_learnCyclesExtended', PACKAGE = 'xSom', dataSet, weightMatrix, oldColumns, cycles, initLearnRate, learnRateReduction, initRadius, radiusReduction, normType, sampling, naExist, updateParametersPerEpoch)
+}
+
 #' A SOM algorithm that handles NA values.
 #'
 #' If the argument \code{naExist} is set to \code{FALSE}, the first 100 lines of the data set will be
@@ -111,7 +115,7 @@ findWinningNeuron <- function(weightMatrix, x, oldColumns) {
 #' weightMatrix <- som.init.extended(dataSet, somSize=2, oldColumns=c(TRUE,TRUE))
 #'
 #' # apply the algorithm
-#' result <- somWithMapping(dataSet, weightMatrix, oldColumns=c(TRUE,TRUE))
+#' result <- somCheckNa(dataSet, weightMatrix, oldColumns=c(TRUE,TRUE))
 somCheckNa <- function(dataSet, weightMatrix, oldColumns, rlen = as.integer( c(0)), initLearnRate = as.numeric( c(0)), initRadius = as.numeric( c(0.0)), radiusReduction = -1.0, learnRateReduction = 0.0, normType = 2L, sampling = 0L, naExist = FALSE, updateParametersPerEpoch = TRUE) {
     .Call('xSom_somCheckNa', PACKAGE = 'xSom', dataSet, weightMatrix, oldColumns, rlen, initLearnRate, initRadius, radiusReduction, learnRateReduction, normType, sampling, naExist, updateParametersPerEpoch)
 }
