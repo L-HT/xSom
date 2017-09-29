@@ -55,8 +55,8 @@ struct DeltaMatrixCalculator: RcppParallel::Worker{
   const RcppParallel::RVector<double> inputVector_;
   RcppParallel::RMatrix<double> resultDelta_;
 
-  DeltaMatrixCalculator(const Rcpp::NumericMatrix inputMatrix,
-                        const Rcpp::NumericVector inputVector,
+  DeltaMatrixCalculator(const Rcpp::NumericMatrix& inputMatrix,
+                        const Rcpp::NumericVector& inputVector,
                         const Rcpp::NumericMatrix resultDelta)
     : inputMatrix_(inputMatrix), inputVector_(inputVector), resultDelta_(resultDelta){
   }
@@ -82,8 +82,8 @@ struct DeltaMatrixCalculatorNoNA: RcppParallel::Worker{
   const RcppParallel::RVector<double> inputVector_;
   RcppParallel::RMatrix<double> resultDelta_;
 
-  DeltaMatrixCalculatorNoNA(const Rcpp::NumericMatrix inputMatrix,
-                        const Rcpp::NumericVector inputVector,
+  DeltaMatrixCalculatorNoNA(const Rcpp::NumericMatrix& inputMatrix,
+                        const Rcpp::NumericVector& inputVector,
                         const Rcpp::NumericMatrix resultDelta)
     : inputMatrix_(inputMatrix), inputVector_(inputVector), resultDelta_(resultDelta){
   }
@@ -128,9 +128,7 @@ replaceNAByMean <- function(x, byRow=F){
 */
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix calculateDelta(Rcpp::NumericMatrix inputMatrix, Rcpp::NumericVector inputVector, bool naExist){
-  Rcpp::NumericMatrix resultDelta(inputMatrix.nrow(), inputMatrix.ncol());
-  Rcpp::NumericVector resultEuclidianDistances2(inputMatrix.nrow());
+void calculateDelta(const Rcpp::NumericMatrix& inputMatrix, const Rcpp::NumericVector& inputVector, const bool naExist, Rcpp::NumericMatrix& resultDelta){
   if (naExist){
     DeltaMatrixCalculator dmc(inputMatrix, inputVector, resultDelta);
     RcppParallel::parallelFor(0, inputMatrix.nrow(), dmc);
@@ -138,6 +136,5 @@ Rcpp::NumericMatrix calculateDelta(Rcpp::NumericMatrix inputMatrix, Rcpp::Numeri
     DeltaMatrixCalculatorNoNA dmc(inputMatrix, inputVector, resultDelta);
     RcppParallel::parallelFor(0, inputMatrix.nrow(), dmc);
   }
-  return resultDelta;
 }
 

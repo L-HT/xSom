@@ -3,8 +3,8 @@
 
 #include <Rcpp.h>
 
-Rcpp::NumericMatrix calculateDelta(Rcpp::NumericMatrix inputMatrix, Rcpp::NumericVector inputVector, bool naExist);
+void calculateDelta(const Rcpp::NumericMatrix& inputMatrix, const Rcpp::NumericVector& inputVector, bool naExist, Rcpp::NumericMatrix& resultDelta);
 
 bool isInvalidNumber(double x);
 
-#endif 
+#endif

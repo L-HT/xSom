@@ -6,27 +6,28 @@
 using namespace Rcpp;
 
 // calculateDelta
-Rcpp::NumericMatrix calculateDelta(Rcpp::NumericMatrix inputMatrix, Rcpp::NumericVector inputVector, bool naExist);
-RcppExport SEXP xSom_calculateDelta(SEXP inputMatrixSEXP, SEXP inputVectorSEXP, SEXP naExistSEXP) {
+void calculateDelta(const Rcpp::NumericMatrix& inputMatrix, const Rcpp::NumericVector& inputVector, const bool naExist, Rcpp::NumericMatrix& resultDelta);
+RcppExport SEXP xSom_calculateDelta(SEXP inputMatrixSEXP, SEXP inputVectorSEXP, SEXP naExistSEXP, SEXP resultDeltaSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type inputMatrix(inputMatrixSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type inputVector(inputVectorSEXP);
-    Rcpp::traits::input_parameter< bool >::type naExist(naExistSEXP);
-    rcpp_result_gen = Rcpp::wrap(calculateDelta(inputMatrix, inputVector, naExist));
-    return rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type inputMatrix(inputMatrixSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type inputVector(inputVectorSEXP);
+    Rcpp::traits::input_parameter< const bool >::type naExist(naExistSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type resultDelta(resultDeltaSEXP);
+    calculateDelta(inputMatrix, inputVector, naExist, resultDelta);
+    return R_NilValue;
 END_RCPP
 }
 // calculateEuclidianDistances
-Rcpp::NumericVector calculateEuclidianDistances(Rcpp::NumericMatrix deltaMatrix, Rcpp::LogicalVector oldColumns);
-RcppExport SEXP xSom_calculateEuclidianDistances(SEXP deltaMatrixSEXP, SEXP oldColumnsSEXP) {
+Rcpp::NumericVector calculateEuclidianDistances(Rcpp::NumericMatrix deltaMatrix, Rcpp::LogicalVector oldColumns, Rcpp::NumericVector& resultEuclidianDistances2);
+RcppExport SEXP xSom_calculateEuclidianDistances(SEXP deltaMatrixSEXP, SEXP oldColumnsSEXP, SEXP resultEuclidianDistances2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type deltaMatrix(deltaMatrixSEXP);
     Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type oldColumns(oldColumnsSEXP);
-    rcpp_result_gen = Rcpp::wrap(calculateEuclidianDistances(deltaMatrix, oldColumns));
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type resultEuclidianDistances2(resultEuclidianDistances2SEXP);
+    rcpp_result_gen = Rcpp::wrap(calculateEuclidianDistances(deltaMatrix, oldColumns, resultEuclidianDistances2));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -70,14 +71,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // matrixToCodebookMatrix
-Rcpp::NumericMatrix matrixToCodebookMatrix(Rcpp::NumericVector matrix, int xDim);
-RcppExport SEXP xSom_matrixToCodebookMatrix(SEXP matrixSEXP, SEXP xDimSEXP) {
+Rcpp::NumericMatrix matrixToCodebookMatrix(Rcpp::NumericVector matrix, int xDim, Rcpp::NumericMatrix& result);
+RcppExport SEXP xSom_matrixToCodebookMatrix(SEXP matrixSEXP, SEXP xDimSEXP, SEXP resultSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type matrix(matrixSEXP);
     Rcpp::traits::input_parameter< int >::type xDim(xDimSEXP);
-    rcpp_result_gen = Rcpp::wrap(matrixToCodebookMatrix(matrix, xDim));
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type result(resultSEXP);
+    rcpp_result_gen = Rcpp::wrap(matrixToCodebookMatrix(matrix, xDim, result));
     return rcpp_result_gen;
 END_RCPP
 }

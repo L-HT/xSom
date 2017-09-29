@@ -60,10 +60,12 @@ struct WinningNeuronSearch : public RcppParallel::Worker{
 //' @export
 // [[Rcpp::export]]
 Rcpp::List findWinningNeuron(Rcpp::NumericMatrix weightMatrix, Rcpp::NumericVector x, Rcpp::LogicalVector oldColumns){
-  Rcpp::NumericMatrix resultDelta = calculateDelta(weightMatrix, x, true);
+  Rcpp::NumericMatrix resultDelta(weightMatrix);
+  calculateDelta(weightMatrix, x, true, resultDelta);
 
-  Rcpp::NumericVector euclidianDistances = calculateEuclidianDistances(resultDelta, oldColumns);
-
+  Rcpp::NumericVector euclidianDistances(weightMatrix.nrow());
+  calculateEuclidianDistances(resultDelta, oldColumns, euclidianDistances);
+  //Rcpp::NumericVector euclidianDistances = calculateEuclidianDistances(resultDelta, oldColumns);
   int somSize = std::sqrt(weightMatrix.nrow());
   int minIndex = findMinimumIndex(euclidianDistances);
   int neuronX = 1 + (minIndex-1) % somSize;

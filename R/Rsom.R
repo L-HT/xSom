@@ -12,15 +12,10 @@ learnCyclesExtendedR <- function(dataSet, weightMatrix, oldColumns,cycles = 1, i
   inverseLearnRateC <- -learnRateReduction;
   progressStep = 1;
 
-  # if (cycles >= 100){
-  #   progressStep <-  (cycles / 100.0);
-  #     cat("1%                                                                                              100%\n")
-  # }else{
-  #   if (!updateParametersPerEpoch && maxCycleIntern > 100){
-  #     progressStep <- (maxCycleIntern %/% 100.0);
-  #     cat("1%                                                                                              100%\n")
-  #   }
-  # }
+  resultDelta <- matrix(0, nrow=nrow(weightMatrix), ncol=ncol(weightMatrix))
+  neighborhoodMatrix <- matrix(0, nrow=nrow(weightMatrix), ncol=ncol(weightMatrix))
+  euclidianDistances2  <- rep(0, nrow(weightMatrix))
+
   if (maxCycleIntern > 100){
     progressStep <- (maxCycleIntern %/% 100.0);
     cat("1%                                                                                              100%\n")
@@ -55,8 +50,8 @@ learnCyclesExtendedR <- function(dataSet, weightMatrix, oldColumns,cycles = 1, i
         cat(".")
       }
       x = dataSet[it,]
-      resultDelta = calculateDelta(weightMatrix, x, naExist);
-      euclidianDistances2 = calculateEuclidianDistances(resultDelta, oldColumns)
+      calculateDelta(weightMatrix, x, naExist, resultDelta);
+      calculateEuclidianDistances(resultDelta, oldColumns, euclidianDistances2)
       winner = which.min(euclidianDistances2);
       if (normType == 1){
         weightMatrix <- weightMatrix + learnRate * (resultDelta *
@@ -65,7 +60,8 @@ learnCyclesExtendedR <- function(dataSet, weightMatrix, oldColumns,cycles = 1, i
       }else{
         nbMatrix = calculateNeighborhoodMatrix(winner, somSize, currentRadius);
         dim(nbMatrix) = c(somSize, somSize);
-        weightMatrix <- weightMatrix + learnRate * (resultDelta * matrixToCodebookMatrix(nbMatrix, newColumns))
+        matrixToCodebookMatrix(nbMatrix, newColumns, neighborhoodMatrix)
+        weightMatrix <- weightMatrix + learnRate * (resultDelta * neighborhoodMatrix)
       }
     }
     if (updateParametersPerEpoch){

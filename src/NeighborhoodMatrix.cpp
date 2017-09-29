@@ -263,9 +263,9 @@ struct MatrixToCodebookMatrixConverter : RcppParallel::Worker{
 };
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix matrixToCodebookMatrix(Rcpp::NumericVector matrix, int xDim){
+Rcpp::NumericMatrix matrixToCodebookMatrix(Rcpp::NumericVector matrix, int xDim, Rcpp::NumericMatrix& result){
 
-  Rcpp::NumericMatrix result(matrix.length(), xDim);
+  //Rcpp::NumericMatrix result(matrix.length(), xDim);
   MatrixToCodebookMatrixConverter mtcmc(matrix, xDim, result);
   parallelFor(0, matrix.length(), mtcmc);
 

@@ -1,7 +1,7 @@
 Package: xSom
 Type: Package
 Title: Parallel Version of the Som Algorithm for Extendable Datasets
-Version: 0.8.1
+Version: 0.8.3
 Authors@R: person("Hoang Thanh", "Le", email = "test@test.com",
   role = c("aut", "cre"))
 Description: A parallelized version of the self-organizing map.

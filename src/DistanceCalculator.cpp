@@ -42,10 +42,10 @@ struct EuclidianDistanceCalculator: RcppParallel::Worker{
 };
 
 // [[Rcpp::export]]
-Rcpp::NumericVector calculateEuclidianDistances(Rcpp::NumericMatrix deltaMatrix, Rcpp::LogicalVector oldColumns){
+Rcpp::NumericVector calculateEuclidianDistances(Rcpp::NumericMatrix deltaMatrix, Rcpp::LogicalVector oldColumns, Rcpp::NumericVector& resultEuclidianDistances2){
 
   int length = deltaMatrix.nrow();
-  Rcpp::NumericVector resultEuclidianDistances2(length);
+  //Rcpp::NumericVector resultEuclidianDistances2(length);
 
   EuclidianDistanceCalculator edc(deltaMatrix, resultEuclidianDistances2, oldColumns);
   RcppParallel::parallelFor(0, length, edc);

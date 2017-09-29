@@ -10,6 +10,14 @@
 #include "NeighborhoodMatrix.h"
 #include "SimpleMatrixOperations.h"
 
+/*
+ * allokiere eine Matrix so groß wie W
+ * In die wird die Delta-Matrix geschrieben.
+ * genause eine Matrix so groß wie W: da rein kommt die matrixToCodebookMatrix
+ *
+ * Dann: calculateEuclidianDistances könnte const ref nehmen
+ */
+
 // [[Rcpp::export]]
 Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix weightMatrix,
                                 Rcpp::LogicalVector oldColumns,
@@ -28,9 +36,9 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
   Rcpp::NumericMatrix result(weightMatrix);
   Rcpp::IntegerVector data_order;
   Rcpp::NumericVector x;
-  Rcpp::NumericMatrix resultDelta;
-  Rcpp::NumericMatrix change;
-  Rcpp::NumericMatrix neighborhoodMatrix;
+  Rcpp::NumericMatrix resultDelta(weightMatrix.nrow(), weightMatrix.ncol());
+  Rcpp::NumericMatrix neighborhoodMatrix(weightMatrix.nrow(), weightMatrix.ncol());;
+  Rcpp::NumericVector euclidianDistances2(weightMatrix.nrow());
 
   int progressStep = 1;
 
@@ -89,8 +97,8 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
       int chosenIndex = *it - 1;
       x = dataSet.row(chosenIndex);
       try{
-        resultDelta = calculateDelta(result, x, naExist);
-        Rcpp::NumericVector euclidianDistances2 = calculateEuclidianDistances(resultDelta, oldColumns);
+        calculateDelta(result, x, naExist, resultDelta);
+        calculateEuclidianDistances(resultDelta, oldColumns, euclidianDistances2);
         int winner = findMinimumIndex(euclidianDistances2);
 
         if (normType == 1){
@@ -99,7 +107,7 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
         }else{
           Rcpp::NumericVector nbMatrix = calculateNeighborhoodMatrix(winner, somSize, currentRadius);
           nbMatrix.attr("dim") = Rcpp::Dimension(somSize, somSize);
-          neighborhoodMatrix = matrixToCodebookMatrix(nbMatrix, newColumns);
+          matrixToCodebookMatrix(nbMatrix, newColumns, neighborhoodMatrix);
 
         }
         result = elementwiseAddition(
