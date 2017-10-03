@@ -3,6 +3,6 @@
 
 #include <Rcpp.h>
 
-Rcpp::NumericVector calculateEuclidianDistances(Rcpp::NumericMatrix deltaMatrix, Rcpp::LogicalVector oldColumns, Rcpp::NumericVector& resultEuclidianDistances2);
+void calculateEuclidianDistances(const Rcpp::NumericMatrix& deltaMatrix, const Rcpp::LogicalVector& oldColumns, Rcpp::NumericVector& resultEuclidianDistances2);
 
 #endif

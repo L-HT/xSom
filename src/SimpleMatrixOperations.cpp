@@ -1,8 +1,6 @@
 #include <Rcpp.h>
 // [[Rcpp::depends(RcppParallel)]]
 #include <RcppParallel.h>
-#include <iostream>
-
 #include "SimpleMatrixOperations.h"
 
 struct MatrixTimesScalarMultiplier : RcppParallel::Worker{

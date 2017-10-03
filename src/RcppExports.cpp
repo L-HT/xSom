@@ -19,16 +19,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // calculateEuclidianDistances
-Rcpp::NumericVector calculateEuclidianDistances(Rcpp::NumericMatrix deltaMatrix, Rcpp::LogicalVector oldColumns, Rcpp::NumericVector& resultEuclidianDistances2);
+void calculateEuclidianDistances(const Rcpp::NumericMatrix& deltaMatrix, const Rcpp::LogicalVector& oldColumns, Rcpp::NumericVector& resultEuclidianDistances2);
 RcppExport SEXP xSom_calculateEuclidianDistances(SEXP deltaMatrixSEXP, SEXP oldColumnsSEXP, SEXP resultEuclidianDistances2SEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type deltaMatrix(deltaMatrixSEXP);
-    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type oldColumns(oldColumnsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type deltaMatrix(deltaMatrixSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::LogicalVector& >::type oldColumns(oldColumnsSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type resultEuclidianDistances2(resultEuclidianDistances2SEXP);
-    rcpp_result_gen = Rcpp::wrap(calculateEuclidianDistances(deltaMatrix, oldColumns, resultEuclidianDistances2));
-    return rcpp_result_gen;
+    calculateEuclidianDistances(deltaMatrix, oldColumns, resultEuclidianDistances2);
+    return R_NilValue;
 END_RCPP
 }
 // calculateNeighborhoodTable
@@ -58,29 +57,27 @@ BEGIN_RCPP
 END_RCPP
 }
 // calculateNeighborhoodMatrix
-Rcpp::NumericVector calculateNeighborhoodMatrix(int winnerNeuronR, int somSize, double radius);
-RcppExport SEXP xSom_calculateNeighborhoodMatrix(SEXP winnerNeuronRSEXP, SEXP somSizeSEXP, SEXP radiusSEXP) {
+void calculateNeighborhoodMatrix(const int& winnerNeuronR, const int& somSize, const double& radius, Rcpp::NumericVector& resultVector);
+RcppExport SEXP xSom_calculateNeighborhoodMatrix(SEXP winnerNeuronRSEXP, SEXP somSizeSEXP, SEXP radiusSEXP, SEXP resultVectorSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type winnerNeuronR(winnerNeuronRSEXP);
-    Rcpp::traits::input_parameter< int >::type somSize(somSizeSEXP);
-    Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
-    rcpp_result_gen = Rcpp::wrap(calculateNeighborhoodMatrix(winnerNeuronR, somSize, radius));
-    return rcpp_result_gen;
+    Rcpp::traits::input_parameter< const int& >::type winnerNeuronR(winnerNeuronRSEXP);
+    Rcpp::traits::input_parameter< const int& >::type somSize(somSizeSEXP);
+    Rcpp::traits::input_parameter< const double& >::type radius(radiusSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type resultVector(resultVectorSEXP);
+    calculateNeighborhoodMatrix(winnerNeuronR, somSize, radius, resultVector);
+    return R_NilValue;
 END_RCPP
 }
 // matrixToCodebookMatrix
-Rcpp::NumericMatrix matrixToCodebookMatrix(Rcpp::NumericVector matrix, int xDim, Rcpp::NumericMatrix& result);
-RcppExport SEXP xSom_matrixToCodebookMatrix(SEXP matrixSEXP, SEXP xDimSEXP, SEXP resultSEXP) {
+void matrixToCodebookMatrix(const Rcpp::NumericVector& matrixAsVector, Rcpp::NumericMatrix& result);
+RcppExport SEXP xSom_matrixToCodebookMatrix(SEXP matrixAsVectorSEXP, SEXP resultSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type matrix(matrixSEXP);
-    Rcpp::traits::input_parameter< int >::type xDim(xDimSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type matrixAsVector(matrixAsVectorSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type result(resultSEXP);
-    rcpp_result_gen = Rcpp::wrap(matrixToCodebookMatrix(matrix, xDim, result));
-    return rcpp_result_gen;
+    matrixToCodebookMatrix(matrixAsVector, result);
+    return R_NilValue;
 END_RCPP
 }
 // findWinningNeuron

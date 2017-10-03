@@ -15,6 +15,7 @@ learnCyclesExtendedR <- function(dataSet, weightMatrix, oldColumns,cycles = 1, i
   resultDelta <- matrix(0, nrow=nrow(weightMatrix), ncol=ncol(weightMatrix))
   neighborhoodMatrix <- matrix(0, nrow=nrow(weightMatrix), ncol=ncol(weightMatrix))
   euclidianDistances2  <- rep(0, nrow(weightMatrix))
+  nbMatrix  <- rep(0, nrow(weightMatrix))
 
   if (maxCycleIntern > 100){
     progressStep <- (maxCycleIntern %/% 100.0);
@@ -58,9 +59,9 @@ learnCyclesExtendedR <- function(dataSet, weightMatrix, oldColumns,cycles = 1, i
                         tableToCodebookMatrix(somSize, winner, newColumns, calculateNeighborhoodTable(somSize, currentRadius))
                         )
       }else{
-        nbMatrix = calculateNeighborhoodMatrix(winner, somSize, currentRadius);
-        dim(nbMatrix) = c(somSize, somSize);
-        matrixToCodebookMatrix(nbMatrix, newColumns, neighborhoodMatrix)
+        calculateNeighborhoodMatrix(winner, somSize, currentRadius, nbMatrix);
+        #dim(nbMatrix) = c(somSize, somSize);
+        matrixToCodebookMatrix(nbMatrix, neighborhoodMatrix)
         weightMatrix <- weightMatrix + learnRate * (resultDelta * neighborhoodMatrix)
       }
     }

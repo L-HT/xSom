@@ -1,31 +1,17 @@
-/*
- * Berechne die Delta-Matrix parallelisiert mit den Zeilen
- *
- * Delta_i = Goal - W_i
- */
-
 #include <Rcpp.h>
 // [[Rcpp::depends(RcppParallel)]]
 #include <RcppParallel.h>
-#include <iostream>
-#include <functional>
 
-#include "DeltaMatrix.h"
+//#include "DeltaMatrix.h"
 
-double addSquares(double x, double y){
-  return x + y*y;
-}
-
-
-bool isInvalidNumber(double x){
+bool isInvalidNumber(const double& x){
   bool a = Rcpp::traits::is_na<REALSXP>(x);
   bool b = Rcpp::traits::is_nan<REALSXP>(x);
   bool c = Rcpp::traits::is_infinite<REALSXP>(x);
   return a || b || c;
 }
 
-//das urspr?ngliche Soft-Minus (x-Vektor - Gewichtsvektor)
-double softMinus(double x, double y){
+double softMinus(const double& x, const double& y){
   double result = 0;
   if (!isInvalidNumber(x) && !isInvalidNumber(y)){
     result = x - y;
@@ -36,7 +22,7 @@ double softMinus(double x, double y){
 //neues Soft-Minus (wegen der Toleranz gegen?ber neuen Spalten
 //muss man als Ausgangspunkt nicht x, sondern w nehmen und davon
 //die L?nge von w), berechnet also -(w-x)
-double softMinus2(double x, double y){
+double softMinus2(const double& x, const double& y){
   double result = 0;
   if (!isInvalidNumber(x) && !isInvalidNumber(y)){
     result = y - x;
@@ -44,11 +30,6 @@ double softMinus2(double x, double y){
   return result;
 }
 
-//normales Minus
-double nonSoftMinus(double x, double y){
-  return y - x;
-
-}
 
 struct DeltaMatrixCalculator: RcppParallel::Worker{
   const RcppParallel::RMatrix<double> inputMatrix_;
@@ -57,17 +38,22 @@ struct DeltaMatrixCalculator: RcppParallel::Worker{
 
   DeltaMatrixCalculator(const Rcpp::NumericMatrix& inputMatrix,
                         const Rcpp::NumericVector& inputVector,
-                        const Rcpp::NumericMatrix resultDelta)
+                        Rcpp::NumericMatrix& resultDelta)
     : inputMatrix_(inputMatrix), inputVector_(inputVector), resultDelta_(resultDelta){
+
   }
 
   void operator()(std::size_t begin, std::size_t end){
     for (std::size_t i = begin; i < end; i++){
       RcppParallel::RMatrix<double>::Row row = inputMatrix_.row(i);
-
+      // RcppParallel::RMatrix<double>::Row resultRow = resultDelta_.row(i);
+      // for (unsigned int k = 0; k < row.length(); k++){
+      //   resultRow[k] = softMinus2(row[k], inputVector_[k]);
+      // }
       //neuer Code: Rechnet nun nur bis zur Breite der Gewichtsmatrix, Rest wird ignoriert
       std::transform(
         row.begin(), row.end(),
+        //inputMatrix_.row(i)).begin(), inputMatrix_.row(i).end(),
         inputVector_.begin(),
         resultDelta_.row(i).begin(),
         softMinus2
@@ -84,28 +70,20 @@ struct DeltaMatrixCalculatorNoNA: RcppParallel::Worker{
 
   DeltaMatrixCalculatorNoNA(const Rcpp::NumericMatrix& inputMatrix,
                         const Rcpp::NumericVector& inputVector,
-                        const Rcpp::NumericMatrix resultDelta)
+                        Rcpp::NumericMatrix& resultDelta)
     : inputMatrix_(inputMatrix), inputVector_(inputVector), resultDelta_(resultDelta){
+
   }
 
   void operator()(std::size_t begin, std::size_t end){
     for (std::size_t i = begin; i < end; i++){
       RcppParallel::RMatrix<double>::Row row = inputMatrix_.row(i);
-
-      //neuer Code: Rechnet nun nur bis zur Breite der Gewichtsmatrix, Rest wird ignoriert
-      // std::transform(
-      //   row.begin(), row.end(),
-      //   inputVector_.begin(),
-      //   resultDelta_.row(i).begin(),
-      //   nonSoftMinus
-      // );
       std::transform(
         inputVector_.begin(), inputVector_.end(),
         row.begin(),
         resultDelta_.row(i).begin(),
         std::minus<double>()
       );
-
     }
   }
 };

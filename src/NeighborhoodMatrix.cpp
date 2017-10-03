@@ -1,8 +1,6 @@
 #include <Rcpp.h>
 // [[Rcpp::depends(RcppParallel)]]
 #include <RcppParallel.h>
-#include <iostream>
-#include <functional>
 #include <cmath>
 
 #include "NeighborhoodMatrix.h"
@@ -93,18 +91,18 @@ inline int xyToRowNumber(int x, int y, int xdim){
   return x + y*xdim;
 }
 struct NeighborhoodMatrixCalculator : RcppParallel::Worker{
-  int xWinner_;
-  int yWinner_;
-  int somSize_;
+  const int xWinner_;
+  const int yWinner_;
+  const int somSize_;
 
-  unsigned int largerLimit_;
-  unsigned int smallerLimit_;
+  const unsigned int largerLimit_;
+  const unsigned int smallerLimit_;
 
-  double radius_;
+  const double radius_;
   RcppParallel::RVector<double> result_;
 
-  NeighborhoodMatrixCalculator(int xWinner, int yWinner, int somSize,
-                               int largerLimit, int smallerLimit, double radius, Rcpp::NumericVector result)
+  NeighborhoodMatrixCalculator(const int& xWinner, const int& yWinner, const int& somSize,
+                               const int& largerLimit, const int& smallerLimit, const double& radius, Rcpp::NumericVector& result)
       : xWinner_(xWinner), yWinner_(yWinner), somSize_(somSize), largerLimit_(largerLimit),
         smallerLimit_(smallerLimit), radius_(radius), result_(result){
 
@@ -114,6 +112,7 @@ struct NeighborhoodMatrixCalculator : RcppParallel::Worker{
     int tempX = 0;
     int tempY = 0;
     double neighborhoodDistance = 0;
+
     for (std::size_t i = begin; i < end; i++){ //ich muss nicht durch somSize laufen, nur entlang des Quadranten
       for (std::size_t j = i; j <= largerLimit_; j++){ //das gr??ere Limit innen
         //if(i>4){std::cout<< i << " " << j << std::endl;}
@@ -175,9 +174,10 @@ struct NeighborhoodMatrixCalculator : RcppParallel::Worker{
 };
 
 // [[Rcpp::export]]
-Rcpp::NumericVector calculateNeighborhoodMatrix(int winnerNeuronR, int somSize, double radius){
+void calculateNeighborhoodMatrix(const int& winnerNeuronR, const int& somSize, const double& radius, Rcpp::NumericVector& resultVector){
   //Neighborhood-Matrix als Tabelle (gibt (somSize x somSize)-Matrix zur?ck)
-  Rcpp::NumericVector result(somSize*somSize);
+  //Rcpp::NumericVector result(somSize*somSize);
+
   int winnerNeuron = winnerNeuronR - 1;
   int yWinner = (int) winnerNeuron / somSize;
   int xWinner = winnerNeuron % somSize;
@@ -185,8 +185,6 @@ Rcpp::NumericVector calculateNeighborhoodMatrix(int winnerNeuronR, int somSize, 
   int yLimit = 0;
   int largestQuadrant = 0; //zweistellige Zahl xy; 11: oben rechts, 01: oben links, 10: unten rechts; 00: unten links
 
-  //std::cout << winnerNeuron << " " << yWinner << " " << xWinner << std::endl;
-  //gr??ter Quadrant
   if (yWinner > somSize/2){
     largestQuadrant = 1;
   }
@@ -214,7 +212,6 @@ Rcpp::NumericVector calculateNeighborhoodMatrix(int winnerNeuronR, int somSize, 
     break;
   }
 
-  //bestimmt, wie der gr??te Quadrant zu durchlaufen ist (zeilenweise oder spaltenweise)
   int* largerLimit = &xLimit;
   int* smallerLimit = &yLimit;
   if (xLimit < yLimit){
@@ -222,12 +219,8 @@ Rcpp::NumericVector calculateNeighborhoodMatrix(int winnerNeuronR, int somSize, 
     smallerLimit = &xLimit;
   }
 
- // std::cout << "nmc " << *largerLimit << " " << *smallerLimit << std::endl;
-  NeighborhoodMatrixCalculator nmc(xWinner, yWinner, somSize, *largerLimit, *smallerLimit, radius, result);
- // std::cout << "nmc ";
+  NeighborhoodMatrixCalculator nmc(xWinner, yWinner, somSize, *largerLimit, *smallerLimit, radius, resultVector);
   parallelFor(0, *smallerLimit+1, nmc);
- // std::cout << "nmc ";
-  return result;
 }
 
 /*** R
@@ -241,33 +234,31 @@ calculateNeighborhoodMatrixT <- function(winner, somSize, radius){
 
 struct MatrixToCodebookMatrixConverter : RcppParallel::Worker{
 
-  RcppParallel::RVector<double> inputMatrix_;
-  unsigned int xDim_;
+  const RcppParallel::RVector<double> inputMatrix_;
+  //const int xDim_;
   RcppParallel::RMatrix<double> result_;
 
-  MatrixToCodebookMatrixConverter(Rcpp::NumericVector inputMatrix, int xDim, Rcpp::NumericMatrix result)
-    : inputMatrix_(inputMatrix), xDim_(xDim), result_(result){
+  MatrixToCodebookMatrixConverter(const Rcpp::NumericVector& inputMatrix, Rcpp::NumericMatrix& result)
+    : inputMatrix_(inputMatrix), result_(result){
 
   }
 
   void operator()(std::size_t begin, std::size_t end){
     for (std::size_t i = begin; i < end; i++){
+
       //std::transform(result_.row(i).begin(), result_.row(i).end(),
       //               result_.row(i).begin(), [](double d){ return inputMatrix_[i]; });
-      for (std::size_t j = 0; j < xDim_; j++){
-        //result_[i,j] = inputMatrix_[i];
-        result_.row(i)[j] = inputMatrix_[i];
-      }
+      std::fill(result_.row(i).begin(), result_.row(i).end(), inputMatrix_[i]);
+      // for (std::size_t j = 0; j < xDim_; j++){
+      //   //result_[i,j] = inputMatrix_[i];
+      //   result_.row(i)[j] = inputMatrix_[i];
+      // }
     }
   }
 };
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix matrixToCodebookMatrix(Rcpp::NumericVector matrix, int xDim, Rcpp::NumericMatrix& result){
-
-  //Rcpp::NumericMatrix result(matrix.length(), xDim);
-  MatrixToCodebookMatrixConverter mtcmc(matrix, xDim, result);
-  parallelFor(0, matrix.length(), mtcmc);
-
-  return result;
+void matrixToCodebookMatrix(const Rcpp::NumericVector& matrixAsVector, Rcpp::NumericMatrix& result){
+  MatrixToCodebookMatrixConverter mtcmc(matrixAsVector, result);
+  parallelFor(0, matrixAsVector.length(), mtcmc);
 }

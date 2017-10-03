@@ -6,7 +6,7 @@ calculateDelta <- function(inputMatrix, inputVector, naExist, resultDelta) {
 }
 
 calculateEuclidianDistances <- function(deltaMatrix, oldColumns, resultEuclidianDistances2) {
-    .Call('xSom_calculateEuclidianDistances', PACKAGE = 'xSom', deltaMatrix, oldColumns, resultEuclidianDistances2)
+    invisible(.Call('xSom_calculateEuclidianDistances', PACKAGE = 'xSom', deltaMatrix, oldColumns, resultEuclidianDistances2))
 }
 
 calculateNeighborhoodTable <- function(somSize, radius) {
@@ -17,12 +17,12 @@ tableToCodebookMatrix <- function(somSize, winnerNeuronR, xDim, lookupTable) {
     .Call('xSom_tableToCodebookMatrix', PACKAGE = 'xSom', somSize, winnerNeuronR, xDim, lookupTable)
 }
 
-calculateNeighborhoodMatrix <- function(winnerNeuronR, somSize, radius) {
-    .Call('xSom_calculateNeighborhoodMatrix', PACKAGE = 'xSom', winnerNeuronR, somSize, radius)
+calculateNeighborhoodMatrix <- function(winnerNeuronR, somSize, radius, resultVector) {
+    invisible(.Call('xSom_calculateNeighborhoodMatrix', PACKAGE = 'xSom', winnerNeuronR, somSize, radius, resultVector))
 }
 
-matrixToCodebookMatrix <- function(matrix, xDim, result) {
-    .Call('xSom_matrixToCodebookMatrix', PACKAGE = 'xSom', matrix, xDim, result)
+matrixToCodebookMatrix <- function(matrixAsVector, result) {
+    invisible(.Call('xSom_matrixToCodebookMatrix', PACKAGE = 'xSom', matrixAsVector, result))
 }
 
 #'

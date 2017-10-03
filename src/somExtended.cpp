@@ -39,6 +39,7 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
   Rcpp::NumericMatrix resultDelta(weightMatrix.nrow(), weightMatrix.ncol());
   Rcpp::NumericMatrix neighborhoodMatrix(weightMatrix.nrow(), weightMatrix.ncol());;
   Rcpp::NumericVector euclidianDistances2(weightMatrix.nrow());
+  Rcpp::NumericVector nbMatrix(weightMatrix.nrow());
 
   int progressStep = 1;
 
@@ -92,8 +93,6 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
       if (cycleIntern % progressStep == 0 && maxCycleIntern >= 100){
         Rcpp::Rcout << ".";
       }
-      // Rcpp::Rcout << currentRadius << "--" << maxCycleIntern << "--" << cycleIntern << "--" << learnRate << std::endl;
-
       int chosenIndex = *it - 1;
       x = dataSet.row(chosenIndex);
       try{
@@ -105,9 +104,10 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
           Rcpp::NumericVector nbTable = calculateNeighborhoodTable(somSize, currentRadius);
           neighborhoodMatrix = tableToCodebookMatrix(somSize, winner, newColumns, nbTable);
         }else{
-          Rcpp::NumericVector nbMatrix = calculateNeighborhoodMatrix(winner, somSize, currentRadius);
-          nbMatrix.attr("dim") = Rcpp::Dimension(somSize, somSize);
-          matrixToCodebookMatrix(nbMatrix, newColumns, neighborhoodMatrix);
+          //Rcpp::NumericVector nbMatrix = calculateNeighborhoodMatrix(winner, somSize, currentRadius);
+          calculateNeighborhoodMatrix(winner, somSize, currentRadius, nbMatrix);
+          //nbMatrix.attr("dim") = Rcpp::Dimension(somSize, somSize);
+          matrixToCodebookMatrix(nbMatrix, neighborhoodMatrix); //ehemalig noch newColumns als 2. Argument
 
         }
         result = elementwiseAddition(
@@ -123,8 +123,6 @@ Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::Numer
       }catch(std::exception &ex){
         forward_exception_to_r(ex);
       }
-      // Rcpp::Rcout << currentRadius << " -- " << learnRate << std::endl;
-      // return result;
     }
     if (updateParametersPerEpoch){
       currentRadius = 1+(initRadius-1)*(cycles-(cycle+1.0))/(cycles);
