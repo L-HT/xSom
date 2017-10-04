@@ -6,9 +6,17 @@
 #include <RcppParallel.h>
 
 
-Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix weightMatrix, 
+Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet,
+                                        Rcpp::NumericMatrix weightMatrix,
                                         Rcpp::LogicalVector oldColumns,
-                                        unsigned int cycles, double initLearnRate, 
-                                        double learnRateReduction, double initRadius, double radiusReduction,
-                                        int normType, int sampling, bool naExist, bool updateParametersPerEpoch);
+                                        unsigned int cycles,
+                                        double initLearnRate,
+                                        double learnRateReduction,
+                                        double initRadius,
+                                        double radiusReduction,
+                                        int normType,
+                                        int sampling,
+                                        bool naExist,
+                                        bool updateParametersPerEpoch,
+                                        unsigned int currentTrainingStep);
 #endif

@@ -94,8 +94,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // learnCyclesExtended
-Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix weightMatrix, Rcpp::LogicalVector oldColumns, unsigned int cycles, double initLearnRate, double learnRateReduction, double initRadius, double radiusReduction, int normType, int sampling, bool naExist, bool updateParametersPerEpoch);
-RcppExport SEXP xSom_learnCyclesExtended(SEXP dataSetSEXP, SEXP weightMatrixSEXP, SEXP oldColumnsSEXP, SEXP cyclesSEXP, SEXP initLearnRateSEXP, SEXP learnRateReductionSEXP, SEXP initRadiusSEXP, SEXP radiusReductionSEXP, SEXP normTypeSEXP, SEXP samplingSEXP, SEXP naExistSEXP, SEXP updateParametersPerEpochSEXP) {
+Rcpp::NumericMatrix learnCyclesExtended(Rcpp::NumericMatrix dataSet, Rcpp::NumericMatrix weightMatrix, Rcpp::LogicalVector oldColumns, unsigned int cycles, double initLearnRate, double learnRateReduction, double initRadius, double radiusReduction, int normType, int sampling, bool naExist, bool updateParametersPerEpoch, unsigned int currentTrainingStep);
+RcppExport SEXP xSom_learnCyclesExtended(SEXP dataSetSEXP, SEXP weightMatrixSEXP, SEXP oldColumnsSEXP, SEXP cyclesSEXP, SEXP initLearnRateSEXP, SEXP learnRateReductionSEXP, SEXP initRadiusSEXP, SEXP radiusReductionSEXP, SEXP normTypeSEXP, SEXP samplingSEXP, SEXP naExistSEXP, SEXP updateParametersPerEpochSEXP, SEXP currentTrainingStepSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -111,7 +111,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type sampling(samplingSEXP);
     Rcpp::traits::input_parameter< bool >::type naExist(naExistSEXP);
     Rcpp::traits::input_parameter< bool >::type updateParametersPerEpoch(updateParametersPerEpochSEXP);
-    rcpp_result_gen = Rcpp::wrap(learnCyclesExtended(dataSet, weightMatrix, oldColumns, cycles, initLearnRate, learnRateReduction, initRadius, radiusReduction, normType, sampling, naExist, updateParametersPerEpoch));
+    Rcpp::traits::input_parameter< unsigned int >::type currentTrainingStep(currentTrainingStepSEXP);
+    rcpp_result_gen = Rcpp::wrap(learnCyclesExtended(dataSet, weightMatrix, oldColumns, cycles, initLearnRate, learnRateReduction, initRadius, radiusReduction, normType, sampling, naExist, updateParametersPerEpoch, currentTrainingStep));
     return rcpp_result_gen;
 END_RCPP
 }

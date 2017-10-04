@@ -46,8 +46,30 @@ findWinningNeuron <- function(weightMatrix, x, oldColumns) {
     .Call('xSom_findWinningNeuron', PACKAGE = 'xSom', weightMatrix, x, oldColumns)
 }
 
-learnCyclesExtended <- function(dataSet, weightMatrix, oldColumns, cycles = 1L, initLearnRate = 0.01, learnRateReduction = 0.0, initRadius = 1.0, radiusReduction = -1.0, normType = 2L, sampling = 1L, naExist = TRUE, updateParametersPerEpoch = TRUE) {
-    .Call('xSom_learnCyclesExtended', PACKAGE = 'xSom', dataSet, weightMatrix, oldColumns, cycles, initLearnRate, learnRateReduction, initRadius, radiusReduction, normType, sampling, naExist, updateParametersPerEpoch)
+#' A single SOM training step
+#'
+#' This function corresponds to a single training step in the SOM algortihm.
+#'
+#' @param cycles How many cycles (epochs) are used for this training step.
+#' @param currentTrainingStep This parameter is used to replicate the default behavior of the
+#' SOM algorithm in the SOM package written by Jun Yan. The original algorithm executed
+#' two training steps in succession while this function replicates the first or second
+#' step depending on whether this parameter is set to 1 or 2. The default value is 0 (no change).
+#' @inheritParams somCheckNa
+#' @export
+#' @examples
+#' #generate Data
+#' dataSet <- matrix(as.numeric(1:400),ncol=2)
+#' weightMatrix <- som.init.extended(dataSet, somSize=3, oldColumns=c(TRUE,TRUE))
+#'
+#' #apply the algorithm
+#' result <- learnCyclesExtended(dataSet, weightMatrix,
+#'      oldColumns=c(TRUE,TRUE), currentTrainingStep=1)
+#' result <- learnCyclesExtended(dataSet, result,
+#'      oldColumns=c(TRUE,TRUE),currentTrainingStep=2)
+#' #result now contains the final result
+learnCyclesExtended <- function(dataSet, weightMatrix, oldColumns, cycles = 1L, initLearnRate = 0.01, learnRateReduction = 0.0, initRadius = 1.0, radiusReduction = -1.0, normType = 2L, sampling = 1L, naExist = TRUE, updateParametersPerEpoch = TRUE, currentTrainingStep = 0L) {
+    .Call('xSom_learnCyclesExtended', PACKAGE = 'xSom', dataSet, weightMatrix, oldColumns, cycles, initLearnRate, learnRateReduction, initRadius, radiusReduction, normType, sampling, naExist, updateParametersPerEpoch, currentTrainingStep)
 }
 
 #' A SOM algorithm that handles NA values.
@@ -136,7 +158,7 @@ somCheckNa <- function(dataSet, weightMatrix, oldColumns, rlen = as.integer( c(0
 #' weightMatrix <- som.init.extended(dataSet, somSize=2, oldColumns=c(TRUE,TRUE))
 #'
 #' # apply the algorithm
-#' result <- somWithMapping(dataSet, weightMatrix, oldColumns=c(TRUE,TRUE))
+#' result <- xSom:::somWithMapping(dataSet, weightMatrix, oldColumns=c(TRUE,TRUE))
 somWithMapping <- function(dataSet, weightMatrix, oldColumns, rlen = as.integer( c(0)), initLearnRate = as.numeric( c(0)), initRadius = as.numeric( c(0.0)), radiusReduction = -1.0, learnRateReduction = 0.0, normType = 2L, sampling = 0L, naExist = TRUE, updateParametersPerEpoch = TRUE) {
     .Call('xSom_somWithMapping', PACKAGE = 'xSom', dataSet, weightMatrix, oldColumns, rlen, initLearnRate, initRadius, radiusReduction, learnRateReduction, normType, sampling, naExist, updateParametersPerEpoch)
 }

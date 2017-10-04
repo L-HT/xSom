@@ -84,3 +84,50 @@ test_that("Tests zwischen LearnCyclesExtended (updateParametersPerEpoch=F)",{
   withR <- xSom:::learnCyclesExtendedR(dataSet= data, weightMatrix=W,  oldColumns=c(T,T), sampling=0, naExist=F, updateParametersPerEpoch = F)
   expect_equal(noR, withR)
 })
+
+test_that("Gleichheit zwischen som und xSom (zwei Lernschritte separat, in R)", {
+  old <- som(data, xdim = somSize, ydim = somSize, alphaType="linear", neigh="gaussian"  )$code
+  new <- learnCyclesExtendedR(dataSet = data, weightMatrix = W, oldColumns=c(T,T),
+                              updateParametersPerEpoch=F, sampling=0, naExist=F, currentTrainingStep=1)
+  new <- learnCyclesExtendedR(dataSet = data, weightMatrix = new, oldColumns=c(T,T),
+                              updateParametersPerEpoch=F, sampling=0, naExist=F, currentTrainingStep=2)
+
+  attr(old, "class") <- NULL
+
+  expect_equal(
+    new, old
+  )
+})
+
+# test_that("Gleichheit zwischen som und xSom (drei Lernschritte separat, in R)", {
+#   old <- som(data, xdim = somSize, ydim = somSize, alphaType="linear", neigh="gaussian"  )$code
+#   new <- learnCyclesExtendedR(dataSet = data, weightMatrix = W, oldColumns=c(T,T),
+#                               updateParametersPerEpoch=F, sampling=0, naExist=F, currentTrainingStep=1)
+#
+#   new <- learnCyclesExtendedR(dataSet = data, weightMatrix = new, oldColumns=c(T,T),
+#                               updateParametersPerEpoch=F, sampling=0, naExist=F, initLearnRate=0.02,
+#                               initRadius = 3, cycles=2, currentTrainingStep=0)
+#   new <- learnCyclesExtendedR(dataSet = data, weightMatrix = new, oldColumns=c(T,T),
+#                               updateParametersPerEpoch=F, sampling=0, naExist=F, initLearnRate=0.02,
+#                               initRadius = 3, cycles=3, currentTrainingStep=0)
+#
+#   attr(old, "class") <- NULL
+#
+#   expect_equal(
+#     new, old
+#   )
+# })
+
+test_that("Gleichheit zwischen som und xSom (zwei Lernschritte separat, in C++)", {
+  old <- som(data, xdim = somSize, ydim = somSize, alphaType="linear", neigh="gaussian"  )$code
+  new <- learnCyclesExtended(dataSet = data, weightMatrix = W, oldColumns=c(T,T),
+                               naExist=F, currentTrainingStep=1)
+  new <- learnCyclesExtended(dataSet = data, weightMatrix = new, oldColumns=c(T,T),
+                               naExist=F, currentTrainingStep=2)
+
+  attr(old, "class") <- NULL
+
+  expect_equal(
+    new, old
+  )
+})

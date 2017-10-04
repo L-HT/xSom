@@ -10,23 +10,23 @@ somTwoStepR <- function(dataSet, weightMatrix,
 
   result <- weightMatrix
   somSize = sqrt(nrow(weightMatrix));
-  str <- paste("Erste Trainingsstufe (rlen = ", rlen[1], " Zyklen, initLearnRate = ", initLearnRate[1], ", initRadius = ",
+  str <- paste("First training step (rlen = ", rlen[1], " cycles, initLearnRate = ", initLearnRate[1], ", initRadius = ",
     initRadius[1], ")", sep="")
   print(str)
   result <- learnCyclesExtendedR(dataSet, weightMatrix, oldColumns, rlen[1],
                               initLearnRate[1], learnRateReduction, initRadius[1],
                               radiusReduction, normType, sampling, naExist,
-                              updateParametersPerEpoch
+                              updateParametersPerEpoch, 0
                               )
 
   if (rlen[2] != 0){
-    str <- paste("Zweite Trainingsstufe (rlen = ", rlen[2], " Zyklen, initLearnRate = ", initLearnRate[2], ", initRadius = ",
+    str <- paste("Second training step (rlen = ", rlen[2], " cycles, initLearnRate = ", initLearnRate[2], ", initRadius = ",
                  initRadius[2], ")", sep="")
     print(str)
     result <- learnCyclesExtendedR(dataSet, result, oldColumns, rlen[2],
                                  initLearnRate[2], learnRateReduction, initRadius[2],
                                  radiusReduction, normType, sampling, naExist,
-                                 updateParametersPerEpoch
+                                 updateParametersPerEpoch, 0
                                  )
   }
   return(result)
@@ -158,9 +158,7 @@ somWithMappingR <- function(dataSet, weightMatrix, oldColumns,
     neuronNumberVector[i] = neuronCoordinates[["neuronNumber"]];
     neuronXVector[i] = neuronCoordinates[["neuronX"]];
     neuronYVector[i] = neuronCoordinates[["neuronY"]];
-    # if (rearrangeRows){
-    #   neuronCoordinates <- rearrangeNeuronCoordinates(neuronCoordinates, somSize)
-    # }
+
 
     # Zähltabelle
     oldValue <- node.summary[node.summary$x == neuronCoordinates["neuronX"] & node.summary$y ==
@@ -211,4 +209,79 @@ somWithMappingR <- function(dataSet, weightMatrix, oldColumns,
 #   result <- somSize^2 - ((k-1) %/% somSize) * somSize + (k-1) %% somSize - (somSize - 1)
 #   return(result)
 # }
+
+#' Generate a SOM mapping from a given codebook matrix
+#'
+#' This function is meant to be used in conjunction with \code{learnCyclesExtended} or
+#' \code{learnCyclesExtendedR}. It takes a given codebook matrix and calculates a list with a structure
+#' similar to \code{somWithMappingR}:
+#' \describe{
+#'   \item{\code{codebook}}{The resulting weight matrix (codebook matrix).}
+#'   \item{\code{feature.mapping}}{A data frame specifying the SOM node mapped to each row of the data set
+#'   as well as the position of the nodes on the quadratic SOM grid.}
+#'   \item{\code{node.summary}}{A data frame which shows how many rows of the data set
+#'   are mapped to each node on the quadratic SOM grid.}
+#' }
+#' @param dataSet The data set.
+#' @param weightMatrix A given weight matrix (codebook matrix).
+#' @param oldColumns A boolean vector specifying the columns of the data set which were already
+#' available before the data set has been extended. In other words, the SOM algorithm only
+#' uses these columns for the calculation of Best Matching Units while the other other columns
+#' are ignored during this step, but still modified during the update of the weight matrix
+#' (codebook matrix).
+#' @return A list described above.
+#' @export
+#' @examples
+#' #generate Data
+#' dataSet <- matrix(as.numeric(1:400),ncol=2)
+#' weightMatrix <- som.init.extended(dataSet, somSize=3, oldColumns=c(TRUE,TRUE))
+#'
+#' #apply the algorithm
+#' result <- learnCyclesExtendedR(dataSet, weightMatrix,
+#'      oldColumns=c(TRUE,TRUE), currentTrainingStep=1)
+#' result <- learnCyclesExtendedR(dataSet, result,
+#'      oldColumns=c(TRUE,TRUE), currentTrainingStep=2)
+#' #result now contains the final result
+#'
+#' #calculate the mapping
+#' resultList <- calculateMapping(dataSet, result, oldColumns=c(TRUE,TRUE))
+calculateMapping <- function(dataSet, weightMatrix, oldColumns){
+  result <- weightMatrix
+  N <- nrow(dataSet)
+  somSize <- sqrt(nrow(result))
+  dataCounter <- seq_len(N);
+  neuronNumberVector <- rep_len(0, N);
+  neuronXVector <- rep_len(0, N);
+  neuronYVector <- rep_len(0, N);
+
+  node.summary <- cbind.data.frame(x = rep(1:somSize, somSize), y = rep(1:somSize, each=somSize),
+                                   n.features = rep(0, somSize*somSize))
+
+  for (i in 1:nrow(dataSet)){
+    neuronCoordinates = findWinningNeuron(result, dataSet[i,], oldColumns);
+    neuronNumberVector[i] = neuronCoordinates[["neuronNumber"]];
+    neuronXVector[i] = neuronCoordinates[["neuronX"]];
+    neuronYVector[i] = neuronCoordinates[["neuronY"]];
+
+
+    # Zähltabelle
+    oldValue <- node.summary[node.summary$x == neuronCoordinates["neuronX"] & node.summary$y ==
+                               neuronCoordinates["neuronY"], "n.features"]
+    node.summary[node.summary$x == neuronCoordinates["neuronX"] & node.summary$y ==
+                   neuronCoordinates["neuronY"], "n.features"] <- oldValue + 1
+  }
+
+  return(
+    list(
+      "codebook" = result,
+      "feature.mapping" = data.frame(
+        "dataRowNumber" = dataCounter,
+        "neuronNumber" = neuronNumberVector,
+        "neuronX" = neuronXVector,
+        "neuronY" = neuronYVector
+      ),
+      "node.summary" = node.summary
+    )
+  );
+}
 
